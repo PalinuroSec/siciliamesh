@@ -1,5 +1,5 @@
 #pragma once
-
+#define ENABLE_JSON_LOGGING 1
 #define ARCH_PORTDUINO 1
 
 //

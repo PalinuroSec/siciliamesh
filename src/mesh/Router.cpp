@@ -626,6 +626,10 @@ void Router::handleReceived(meshtastic_MeshPacket *p, RxSource src)
             mqtt->onSend(*p_encrypted, *p, p->channel);
 #endif
     }
+    if (!decoded) {
+        // true = keep original encryption bytes
+        service->sendToPhone(packetPool.allocCopy(*p));
+    }
 
     packetPool.release(p_encrypted); // Release the encrypted packet
 }
@@ -669,11 +673,13 @@ void Router::perhapsHandleReceived(meshtastic_MeshPacket *p)
         return;
     }
 
+    
     if (shouldFilterReceived(p)) {
         LOG_DEBUG("Incoming msg was filtered from 0x%x", p->from);
         packetPool.release(p);
         return;
     }
+
 
     // Note: we avoid calling shouldFilterReceived if we are supposed to ignore certain nodes - because some overrides might
     // cache/learn of the existence of nodes (i.e. FloodRouter) that they should not
