@@ -626,10 +626,10 @@ void Router::handleReceived(meshtastic_MeshPacket *p, RxSource src)
             mqtt->onSend(*p_encrypted, *p, p->channel);
 #endif
     }
-    if (!decoded) {
+    
         // true = keep original encryption bytes
         service->sendToPhone(packetPool.allocCopy(*p));
-    }
+    
 
     packetPool.release(p_encrypted); // Release the encrypted packet
 }
