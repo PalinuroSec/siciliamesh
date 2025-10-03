@@ -626,11 +626,10 @@ void Router::handleReceived(meshtastic_MeshPacket *p, RxSource src)
             mqtt->onSend(*p_encrypted, *p, p->channel);
 #endif
     }
+    // mini patch per ricevere tutto (encrypted e2e e traceroute passanti)
+    service->sendToPhone(packetPool.allocCopy(*p));
+    // end patch
     
-        // true = keep original encryption bytes
-        service->sendToPhone(packetPool.allocCopy(*p));
-    
-
     packetPool.release(p_encrypted); // Release the encrypted packet
 }
 
