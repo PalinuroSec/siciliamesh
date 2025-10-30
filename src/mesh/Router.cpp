@@ -207,45 +207,44 @@ ErrorCode Router::sendLocal(meshtastic_MeshPacket *p, RxSource src)
 ErrorCode Router::send(meshtastic_MeshPacket *p)
 {
 
-#ifdef STEALTH_MODE
+    if(config.device.role == meshtastic_Config_DeviceConfig_Role_SENSOR){
 
-    LOG_DEBUG("PACKET PORTNUM: %d", p->decoded.portnum);
+        LOG_DEBUG("PACKET PORTNUM: %d", p->decoded.portnum);
 
-    bool toSkip = true;
+        bool toSkip = true;
 
-    if (p->decoded.portnum == meshtastic_PortNum_NODEINFO_APP){
-        LOG_DEBUG("[STEALTH] PORTNUM SEEMS TO BE A NODE INFO SKIPPING NOW");
-    } else if (p->decoded.portnum == meshtastic_PortNum_TRACEROUTE_APP){
-        LOG_DEBUG("[STEALTH] PORTNUM SEEMS TO BE A TRACEROUTE SKIPPING NOW");
-    } else if (p->decoded.portnum == meshtastic_PortNum_POSITION_APP){
-        LOG_DEBUG("[STEALTH] PORTNUM SEEMS TO BE A POSITION SKIPPING NOW");
-    } else if (p->decoded.portnum == meshtastic_PortNum_TELEMETRY_APP){
-        LOG_DEBUG("[STEALTH] PORTNUM SEEMS TO BE A TELEMETRY SKIPPING NOW");
-    } else if (p->decoded.portnum == meshtastic_PortNum_ROUTING_APP){
-        LOG_DEBUG("[STEALTH] PORTNUM SEEMS TO BE A ROUTING SKIPPING NOW");
-    } else if (p->decoded.portnum == meshtastic_PortNum_POSITION_APP){
-        LOG_DEBUG("[STEALTH] PORTNUM SEEMS TO BE A POSITION SKIPPING NOW");
-    } else if (p->decoded.portnum == meshtastic_PortNum_RANGE_TEST_APP){
-        LOG_DEBUG("[STEALTH] PORTNUM SEEMS TO BE A RANGETEST SKIPPING NOW");
-    } else if (p->decoded.portnum == meshtastic_PortNum_NEIGHBORINFO_APP){
-        LOG_DEBUG("[STEALTH] PORTNUM SEEMS TO BE A NEIGHBORINFO SKIPPING NOW");
-    } else if (p->decoded.portnum == meshtastic_PortNum_PAXCOUNTER_APP){
-        LOG_DEBUG("[STEALTH] PORTNUM SEEMS TO BE A PAXCOUNTER SKIPPING NOW");
-    } else if (p->decoded.portnum == meshtastic_PortNum_WAYPOINT_APP){
-        LOG_DEBUG("[STEALTH] PORTNUM SEEMS TO BE A PAXCOUNTER SKIPPING NOW");
-    } else if (p->decoded.portnum == meshtastic_PortNum_POWERSTRESS_APP){
-        LOG_DEBUG("[STEALTH] PORTNUM SEEMS TO BE A POWERSTRESS SKIPPING NOW");
-    } else {
-        toSkip = false;
+        if (p->decoded.portnum == meshtastic_PortNum_NODEINFO_APP){
+            LOG_DEBUG("[STEALTH] PORTNUM SEEMS TO BE A NODE INFO SKIPPING NOW");
+        } else if (p->decoded.portnum == meshtastic_PortNum_TRACEROUTE_APP){
+            LOG_DEBUG("[STEALTH] PORTNUM SEEMS TO BE A TRACEROUTE SKIPPING NOW");
+        } else if (p->decoded.portnum == meshtastic_PortNum_POSITION_APP){
+            LOG_DEBUG("[STEALTH] PORTNUM SEEMS TO BE A POSITION SKIPPING NOW");
+        } else if (p->decoded.portnum == meshtastic_PortNum_TELEMETRY_APP){
+            LOG_DEBUG("[STEALTH] PORTNUM SEEMS TO BE A TELEMETRY SKIPPING NOW");
+        } else if (p->decoded.portnum == meshtastic_PortNum_ROUTING_APP){
+            LOG_DEBUG("[STEALTH] PORTNUM SEEMS TO BE A ROUTING SKIPPING NOW");
+        } else if (p->decoded.portnum == meshtastic_PortNum_POSITION_APP){
+            LOG_DEBUG("[STEALTH] PORTNUM SEEMS TO BE A POSITION SKIPPING NOW");
+        } else if (p->decoded.portnum == meshtastic_PortNum_RANGE_TEST_APP){
+            LOG_DEBUG("[STEALTH] PORTNUM SEEMS TO BE A RANGETEST SKIPPING NOW");
+        } else if (p->decoded.portnum == meshtastic_PortNum_NEIGHBORINFO_APP){
+            LOG_DEBUG("[STEALTH] PORTNUM SEEMS TO BE A NEIGHBORINFO SKIPPING NOW");
+        } else if (p->decoded.portnum == meshtastic_PortNum_PAXCOUNTER_APP){
+            LOG_DEBUG("[STEALTH] PORTNUM SEEMS TO BE A PAXCOUNTER SKIPPING NOW");
+        } else if (p->decoded.portnum == meshtastic_PortNum_WAYPOINT_APP){
+            LOG_DEBUG("[STEALTH] PORTNUM SEEMS TO BE A PAXCOUNTER SKIPPING NOW");
+        } else if (p->decoded.portnum == meshtastic_PortNum_POWERSTRESS_APP){
+            LOG_DEBUG("[STEALTH] PORTNUM SEEMS TO BE A POWERSTRESS SKIPPING NOW");
+        } else {
+            toSkip = false;
+        }
+
+        if (toSkip){
+            packetPool.release(p);
+            return meshtastic_Routing_Error_NO_RESPONSE;
+        }
     }
-
-    if (toSkip){
-        packetPool.release(p);
-        return meshtastic_Routing_Error_NO_RESPONSE;
-    }
-      
-#endif
-
+   
     if (isToUs(p)) {
         LOG_ERROR("BUG! send() called with packet destined for local node!");
         packetPool.release(p);
@@ -666,9 +665,12 @@ void Router::handleReceived(meshtastic_MeshPacket *p, RxSource src)
             mqtt->onSend(*p_encrypted, *p, p->channel);
 #endif
     }
+
+#ifdef SNIFF_ALL_PACKETS
     // mini patch per ricevere tutto (encrypted e2e e traceroute passanti)
-    //service->sendToPhone(packetPool.allocCopy(*p));
+    service->sendToPhone(packetPool.allocCopy(*p));
     // end patch
+#endif
     
     packetPool.release(p_encrypted); // Release the encrypted packet
 }

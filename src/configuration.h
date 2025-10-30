@@ -293,14 +293,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #error HW_VENDOR must be defined
 #endif
 
-
-
 // -----------------------------------------------------------------------------
-// If not commented, device will only be able to send channel messages! And no telemetry aswell!
+// Define this below and you'll get all packets you want through serial
 // -----------------------------------------------------------------------------
 
-#define STEALTH_MODE
-
+//#define SNIFF_ALL_PACKETS 
 
 // -----------------------------------------------------------------------------
 // Global switches to turn off features for a minimized build

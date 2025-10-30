@@ -189,12 +189,15 @@ static uint8_t ourMacAddr[6];
 NodeDB::NodeDB()
 {
     LOG_INFO("Init NodeDB");
+
     loadFromDisk();
     cleanupMeshDB();
 
     uint32_t devicestateCRC = crc32Buffer(&devicestate, sizeof(devicestate));
     uint32_t configCRC = crc32Buffer(&config, sizeof(config));
     uint32_t channelFileCRC = crc32Buffer(&channelFile, sizeof(channelFile));
+
+    LOG_INFO("Current ROLE %d", config.device.role);
 
     //setup di nome invisibile
     // snprintf(owner.long_name, sizeof(owner.long_name), "⠀", getNodeNum() & 0x0ffff);
@@ -885,44 +888,47 @@ void NodeDB::installDefaultDeviceState()
  */
 void NodeDB::pickNewNodeNum()
 {
-#if defined(STEALTH_MODE) && defined(CONFIG_IDF_TARGET_ESP32S3)
+    bool randomized = false;
 
-    getMacAddr(ourMacAddr);
+#ifdef CONFIG_IDF_TARGET_ESP32S3
+    if(config.device.role == meshtastic_Config_DeviceConfig_Role_SENSOR){
+        getMacAddr(ourMacAddr);
 
-    // Inizializza il generatore casuale con entropia hardware (ESP32-S3 TRNG)
-    randomSeed(esp_random());
+        // Inizializza il generatore casuale con entropia hardware (ESP32-S3 TRNG)
+        randomSeed(esp_random());
 
-    // Genera ID casuale, con piccola entropia derivata dal MAC per evitare collisioni
-    NodeNum nodeNum = random(1, LONG_MAX) ^ 
-                      ((ourMacAddr[3] << 16) | (ourMacAddr[4] << 8) | ourMacAddr[5]);
+        // Genera ID casuale, con piccola entropia derivata dal MAC per evitare collisioni
+        NodeNum nodeNum = random(1, LONG_MAX) ^ 
+                        ((ourMacAddr[3] << 16) | (ourMacAddr[4] << 8) | ourMacAddr[5]);
 
-    LOG_DEBUG("STEALTH_MODE (ESP32-S3): Generated new random NodeNum: 0x%x", nodeNum);
-    myNodeInfo.my_node_num = nodeNum;
+        LOG_DEBUG("STEALTH_MODE (ESP32-S3): Generated new random NodeNum: 0x%x", nodeNum);
+        myNodeInfo.my_node_num = nodeNum;
+        randomized = true;
+    }
+#endif
 
-#else 
+    if(randomized){
+        return;
+    }
 
     NodeNum nodeNum = myNodeInfo.my_node_num;
     getMacAddr(ourMacAddr); // Make sure ourMacAddr is set
-    if (nodeNum == 0) {
-        // Pick an initial nodenum based on the macaddr
-        nodeNum = (ourMacAddr[2] << 24) | (ourMacAddr[3] << 16) | (ourMacAddr[4] << 8) | ourMacAddr[5];
-    }
+    // Pick an initial nodenum based on the macaddr
+    nodeNum = (ourMacAddr[2] << 24) | (ourMacAddr[3] << 16) | (ourMacAddr[4] << 8) | ourMacAddr[5];
 
     meshtastic_NodeInfoLite *found;
     while (((found = getMeshNode(nodeNum)) && memcmp(found->user.macaddr, ourMacAddr, sizeof(ourMacAddr)) != 0) ||
-           (nodeNum == NODENUM_BROADCAST || nodeNum < NUM_RESERVED)) {
+        (nodeNum == NODENUM_BROADCAST || nodeNum < NUM_RESERVED)) {
         NodeNum candidate = random(NUM_RESERVED, LONG_MAX); // try a new random choice
         if (found)
             LOG_WARN("NOTE! Our desired nodenum 0x%x is invalid or in use, by MAC ending in 0x%02x%02x vs our 0x%02x%02x, so "
-                     "trying for 0x%x",
-                     nodeNum, found->user.macaddr[4], found->user.macaddr[5], ourMacAddr[4], ourMacAddr[5], candidate);
+                    "trying for 0x%x",
+                    nodeNum, found->user.macaddr[4], found->user.macaddr[5], ourMacAddr[4], ourMacAddr[5], candidate);
         nodeNum = candidate;
     }
     LOG_DEBUG("Use nodenum 0x%x ", nodeNum);
 
     myNodeInfo.my_node_num = nodeNum;
-    
-#endif
 }
 
 static const char *prefFileName = "/prefs/db.proto";
