@@ -20,10 +20,16 @@
 
 /// max number of nodes allowed in the mesh
 #ifndef MAX_NUM_NODES
-#define MAX_NUM_NODES 100
-#endif
 
-#define MAX_NUM_NODES_FS 100
+    #ifdef CONFIG_IDF_TARGET_ESP32S3
+        #define MAX_NUM_NODES 200
+        #define MAX_NUM_NODES_FS 200
+    #else
+        #define MAX_NUM_NODES 100
+        #define MAX_NUM_NODES_FS 100
+    #endif  // CONFIG_IDF_TARGET_ESP32S3
+
+#endif // MAX_NUM_NODES
 
 /// Max number of channels allowed
 #define MAX_NUM_CHANNELS (member_size(meshtastic_ChannelFile, channels) / member_size(meshtastic_ChannelFile, channels[0]))

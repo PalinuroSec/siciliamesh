@@ -196,6 +196,10 @@ NodeDB::NodeDB()
     uint32_t configCRC = crc32Buffer(&config, sizeof(config));
     uint32_t channelFileCRC = crc32Buffer(&channelFile, sizeof(channelFile));
 
+    //setup di nome invisibile
+    // snprintf(owner.long_name, sizeof(owner.long_name), "⠀", getNodeNum() & 0x0ffff);
+    // snprintf(owner.short_name, sizeof(owner.short_name), "⠀", getNodeNum() & 0x0ffff);
+
     int saveWhat = 0;
     // Get device unique id
 #if defined(CONFIG_IDF_TARGET_ESP32C3) || defined(CONFIG_IDF_TARGET_ESP32S3)
@@ -1147,7 +1151,14 @@ bool NodeDB::saveDeviceStateToDisk()
     // Because so huge we _must_ not use fullAtomic, because the filesystem is probably too small to hold two copies of this
     size_t deviceStateSize;
     pb_get_encoded_size(&deviceStateSize, meshtastic_DeviceState_fields, &devicestate);
-    return saveProto(prefFileName, deviceStateSize, &meshtastic_DeviceState_msg, &devicestate, false);
+
+    #ifdef CONFIG_IDF_TARGET_ESP32S3
+    bool atomicSave = true;
+    #else
+        bool atomicSave = false;
+    #endif
+
+    return saveProto(prefFileName, deviceStateSize, &meshtastic_DeviceState_msg, &devicestate, atomicSave);
 }
 
 bool NodeDB::saveToDiskNoRetry(int saveWhat)
