@@ -885,6 +885,22 @@ void NodeDB::installDefaultDeviceState()
  */
 void NodeDB::pickNewNodeNum()
 {
+#if defined(STEALTH_MODE) && defined(CONFIG_IDF_TARGET_ESP32S3)
+
+    getMacAddr(ourMacAddr);
+
+    // Inizializza il generatore casuale con entropia hardware (ESP32-S3 TRNG)
+    randomSeed(esp_random());
+
+    // Genera ID casuale, con piccola entropia derivata dal MAC per evitare collisioni
+    NodeNum nodeNum = random(1, LONG_MAX) ^ 
+                      ((ourMacAddr[3] << 16) | (ourMacAddr[4] << 8) | ourMacAddr[5]);
+
+    LOG_DEBUG("STEALTH_MODE (ESP32-S3): Generated new random NodeNum: 0x%x", nodeNum);
+    myNodeInfo.my_node_num = nodeNum;
+
+#else 
+
     NodeNum nodeNum = myNodeInfo.my_node_num;
     getMacAddr(ourMacAddr); // Make sure ourMacAddr is set
     if (nodeNum == 0) {
@@ -905,6 +921,8 @@ void NodeDB::pickNewNodeNum()
     LOG_DEBUG("Use nodenum 0x%x ", nodeNum);
 
     myNodeInfo.my_node_num = nodeNum;
+    
+#endif
 }
 
 static const char *prefFileName = "/prefs/db.proto";
