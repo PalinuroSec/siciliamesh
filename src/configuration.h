@@ -294,12 +294,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #endif
 
 // -----------------------------------------------------------------------------
-// Define this below and you'll get all packets you want through serial
-// -----------------------------------------------------------------------------
-
-//#define SNIFF_ALL_PACKETS 
-
-// -----------------------------------------------------------------------------
 // Global switches to turn off features for a minimized build
 // -----------------------------------------------------------------------------
 

@@ -666,11 +666,11 @@ void Router::handleReceived(meshtastic_MeshPacket *p, RxSource src)
 #endif
     }
 
-#ifdef SNIFF_ALL_PACKETS
-    // mini patch per ricevere tutto (encrypted e2e e traceroute passanti)
-    service->sendToPhone(packetPool.allocCopy(*p));
-    // end patch
-#endif
+    if (config.device.role == meshtastic_Config_DeviceConfig_Role_CLIENT_HIDDEN) {
+        // mini patch per ricevere tutto (encrypted e2e e traceroute passanti)
+        service->sendToPhone(packetPool.allocCopy(*p));
+        // end patch
+    }
     
     packetPool.release(p_encrypted); // Release the encrypted packet
 }
