@@ -8,8 +8,7 @@
   "[cpp]": {
     "editor.defaultFormatter": "trunk.io"
   },
-  "files.associations": {
-    "cstddef": "cpp",
-    "limits": "cpp"
+  "[powershell]": {
+    "editor.defaultFormatter": "ms-vscode.powershell"
   }
 }

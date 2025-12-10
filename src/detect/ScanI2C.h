@@ -14,11 +14,12 @@ class ScanI2C
         SCREEN_ST7567,
         RTC_RV3028,
         RTC_PCF8563,
+        RTC_RX8130CE,
         CARDKB,
         TDECKKB,
         BBQ10KB,
         RAK14004,
-        PMU_AXP192_AXP2101,
+        PMU_AXP192_AXP2101, // has the same adress as the TCA8418KB
         BME_680,
         BME_280,
         BMP_280,
@@ -49,6 +50,7 @@ class ScanI2C
         VEML7700,
         RCWL9620,
         NCP5623,
+        LP5562,
         TSL2591,
         OPT3001,
         MLX90632,
@@ -60,6 +62,7 @@ class ScanI2C
         FT6336U,
         STK8BAXX,
         ICM20948,
+        SCD4X,
         MAX30102,
         TPS65233,
         MPR121KB,
@@ -67,6 +70,22 @@ class ScanI2C
         INA226,
         NXP_SE050,
         DFROBOT_RAIN,
+        DPS310,
+        LTR390UV,
+        RAK12035,
+        TCA8418KB,
+        PCT2075,
+        CST328,
+        BQ25896,
+        BQ27220,
+        LTR553ALS,
+        BHI260AP,
+        BMM150,
+        TSL2561,
+        DRV2605,
+        BH1750,
+        DA217,
+        CHSC6X
     } DeviceType;
 
     // typedef uint8_t DeviceAddress;
@@ -118,6 +137,10 @@ class ScanI2C
     FoundDevice firstKeyboard() const;
 
     FoundDevice firstAccelerometer() const;
+
+    FoundDevice firstAQI() const;
+
+    FoundDevice firstRGBLED() const;
 
     virtual FoundDevice find(DeviceType) const;
 
