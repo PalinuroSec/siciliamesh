@@ -47,6 +47,12 @@ bool ReliableRouter::shouldFilterReceived(const meshtastic_MeshPacket *p)
     if (p->from == getNodeNum()) {
         printPacket("Rx someone rebroadcasting for us", p);
 
+        if (p->relay_node != 0) {
+           LOG_DEBUG("REBROADCAST_BY=0x%02X", p->relay_node);
+        } else {
+            LOG_DEBUG("REBROADCAST RELAY NODE ZERO ", p->relay_node);
+        }
+
         // We are seeing someone rebroadcast one of our broadcast attempts.
         // If this is the first time we saw this, cancel any retransmissions we have queued up and generate an internal ack for
         // the original sending process.

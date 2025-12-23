@@ -1075,6 +1075,11 @@ void GPS::publishUpdate()
 
 int32_t GPS::runOnce()
 {
+
+    #ifdef SKIP_GPS_INIT
+        return disable();
+    #endif
+
     if (!GPSInitFinished) {
         if (!_serial_gps || config.position.gps_mode == meshtastic_Config_PositionConfig_GpsMode_NOT_PRESENT) {
             LOG_INFO("GPS set to not-present. Skip probe");
