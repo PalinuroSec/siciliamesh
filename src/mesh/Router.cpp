@@ -288,6 +288,7 @@ ErrorCode Router::rawSend(meshtastic_MeshPacket *p)
 ErrorCode Router::send(meshtastic_MeshPacket *p)
 {
 
+#ifdef STEALTH_MODE
      if(config.device.role == meshtastic_Config_DeviceConfig_Role_SENSOR){
 
         LOG_DEBUG("PACKET PORTNUM: %d", p->decoded.portnum);
@@ -331,6 +332,7 @@ ErrorCode Router::send(meshtastic_MeshPacket *p)
             return meshtastic_Routing_Error_NO_RESPONSE;
         }
     }
+#endif
 
 
     if (isToUs(p)) {

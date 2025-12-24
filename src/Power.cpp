@@ -25,6 +25,9 @@
 #include "input/LinuxInputImpl.h"
 #endif
 
+#define ABSOLUTE_SHUTDOWN_MV 3400
+#define ABSOLUTE_SHUTDOWN_COUNT 3 
+
 // Working USB detection for powered/charging states on the RAK platform
 #ifdef NRF_APM
 #include "nrfx_power.h"
@@ -752,7 +755,8 @@ void Power::reboot()
 #endif
 }
 
-void Power::shutdown()
+//shutdown logic
+void Power::shutdown(uint32_t sleepMs)
 {
 
 #if HAS_SCREEN
@@ -779,7 +783,7 @@ void Power::shutdown()
 #ifdef PIN_LED3
     ledOff(PIN_LED3);
 #endif
-    doDeepSleep(DELAY_FOREVER, true, true);
+    doDeepSleep(sleepMs, true, true);
 #elif defined(ARCH_PORTDUINO)
     exit(EXIT_SUCCESS);
 #else
@@ -802,6 +806,33 @@ void Power::readPowerStatus()
         hasBattery = batteryLevel->isBatteryConnect() ? OptTrue : OptFalse;
         usbPowered = batteryLevel->isVbusIn() ? OptTrue : OptFalse;
         isChargingNow = batteryLevel->isCharging() ? OptTrue : OptFalse;
+
+        #ifdef FORCE_SHUTDOWN_LOWPOWER
+            static uint8_t absolute_shutdown_counter = 0;
+            batteryVoltageMv = batteryLevel->getBattVoltage();
+            LOG_DEBUG("BATTERY VOLTAGE mV %d", batteryVoltageMv);
+
+            if (batteryVoltageMv > 0 && batteryVoltageMv <= ABSOLUTE_SHUTDOWN_MV) {
+
+                absolute_shutdown_counter++;
+
+                LOG_ERROR("ABSOLUTE POWER CUTOFF: %d mV (%u/%u)",
+                        batteryVoltageMv,
+                        absolute_shutdown_counter,
+                        ABSOLUTE_SHUTDOWN_COUNT);
+
+                if (absolute_shutdown_counter >= ABSOLUTE_SHUTDOWN_COUNT) {
+                    LOG_ERROR("Voltage too low, forcing shutdown NOW");
+                    absolute_shutdown_counter = ABSOLUTE_SHUTDOWN_COUNT;
+                    shutdown(43200000); //12 h per riprovare
+                    return;
+                }
+
+            } else {
+                absolute_shutdown_counter = 0;
+            }
+        #endif
+
         if (hasBattery) {
             batteryVoltageMv = batteryLevel->getBattVoltage();
             // If the AXP192 returns a valid battery percentage, use it

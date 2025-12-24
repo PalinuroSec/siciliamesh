@@ -1103,9 +1103,10 @@ void NodeDB::installDefaultDeviceState()
 void NodeDB::pickNewNodeNum()
 {
 
+#if defined(CONFIG_IDF_TARGET_ESP32S3) && defined(STEALTH_MODE)
+
     bool randomized = false;
 
-#ifdef CONFIG_IDF_TARGET_ESP32S3
     if(config.device.role == meshtastic_Config_DeviceConfig_Role_SENSOR){
         getMacAddr(ourMacAddr);
 
@@ -1120,11 +1121,12 @@ void NodeDB::pickNewNodeNum()
         myNodeInfo.my_node_num = nodeNum;
         randomized = true;
     }
-#endif
 
     if(randomized){
         return;
     }
+
+#endif
 
     NodeNum nodeNum = myNodeInfo.my_node_num;
     getMacAddr(ourMacAddr); // Make sure ourMacAddr is set

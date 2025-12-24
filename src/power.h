@@ -134,7 +134,7 @@ class Power : private concurrency::OSThread
     bool meshSolarInit();
 
   private:
-    void shutdown();
+    void shutdown(uint32_t sleepMs = portMAX_DELAY);
     void reboot();
     // open circuit voltage lookup table
     uint8_t low_voltage_counter;
