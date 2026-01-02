@@ -417,10 +417,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // -----------------------------------------------------------------------------
 // DARKMESH SWITCHES
 // -----------------------------------------------------------------------------
-#define SKIP_GPS_INIT 1
-#define SKIP_OVERRIDE_DUTYCYCLE 1
+//#define SKIP_GPS_INIT 1
+//#define SKIP_OVERRIDE_DUTYCYCLE 1
 #define FORCE_SHUTDOWN_LOWPOWER 1 
-#define STEALTH_MODE 1
+//#define STEALTH_MODE 1
 
 // #define MESHTASTIC_MINIMIZE_BUILD 1
 #ifdef MESHTASTIC_MINIMIZE_BUILD
