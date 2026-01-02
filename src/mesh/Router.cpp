@@ -256,7 +256,7 @@ ErrorCode Router::send(meshtastic_MeshPacket *p)
         return meshtastic_Routing_Error_BAD_REQUEST;
     } // should have already been handled by sendLocal
 
-#ifdef SKIP_OVERRIDE_DUTYCYCLE
+#ifndef SKIP_OVERRIDE_DUTYCYCLE
     // Abort sending if we are violating the duty cycle
     if (!config.lora.override_duty_cycle && myRegion->dutyCycle < 100) {
         float hourlyTxPercent = airTime->utilizationTXPercent();
