@@ -75,7 +75,7 @@ class Power : private concurrency::OSThread
 
     Power();
 
-    void shutdown();
+    void shutdown(uint32_t sleepMs = portMAX_DELAY);
     void readPowerStatus();
     virtual bool setup();
     virtual int32_t runOnce() override;

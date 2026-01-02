@@ -38,6 +38,9 @@
 #define DELAY_FOREVER portMAX_DELAY
 #endif
 
+#define ABSOLUTE_SHUTDOWN_MV 3400
+#define ABSOLUTE_SHUTDOWN_COUNT 3
+
 #if defined(BATTERY_PIN) && defined(ARCH_ESP32)
 
 #ifndef BAT_MEASURE_ADC_UNIT // ADC1 is default
@@ -636,7 +639,7 @@ bool Power::setup()
     return found;
 }
 
-void Power::shutdown()
+void Power::shutdown(uint32_t sleepMs)
 {
     LOG_INFO("Shutting down");
 
@@ -650,7 +653,7 @@ void Power::shutdown()
 #ifdef PIN_LED3
     ledOff(PIN_LED3);
 #endif
-    doDeepSleep(DELAY_FOREVER, false, false);
+    doDeepSleep(sleepMs, true, true);
 #endif
 }
 
@@ -669,6 +672,34 @@ void Power::readPowerStatus()
         hasBattery = batteryLevel->isBatteryConnect() ? OptTrue : OptFalse;
         usbPowered = batteryLevel->isVbusIn() ? OptTrue : OptFalse;
         isCharging = batteryLevel->isCharging() ? OptTrue : OptFalse;
+
+
+#ifdef FORCE_SHUTDOWN_LOWPOWER
+        static uint8_t absolute_shutdown_counter = 0;
+        batteryVoltageMv = batteryLevel->getBattVoltage();
+        LOG_DEBUG("BATTERY VOLTAGE mV %d", batteryVoltageMv);
+
+        if (batteryVoltageMv > 0 && batteryVoltageMv <= ABSOLUTE_SHUTDOWN_MV) {
+
+            absolute_shutdown_counter++;
+
+            LOG_ERROR("ABSOLUTE POWER CUTOFF: %d mV (%u/%u)",
+                    batteryVoltageMv,
+                    absolute_shutdown_counter,
+                    ABSOLUTE_SHUTDOWN_COUNT);
+
+            if (absolute_shutdown_counter >= ABSOLUTE_SHUTDOWN_COUNT) {
+                LOG_ERROR("Voltage too low, forcing shutdown NOW");
+                absolute_shutdown_counter = ABSOLUTE_SHUTDOWN_COUNT;
+                shutdown(43200000); //12 h per riprovare
+                return;
+            }
+
+        } else {
+            absolute_shutdown_counter = 0;
+        }
+#endif
+
         if (hasBattery) {
             batteryVoltageMv = batteryLevel->getBattVoltage();
             // If the AXP192 returns a valid battery percentage, use it
