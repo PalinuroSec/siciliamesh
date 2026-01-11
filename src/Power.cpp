@@ -756,7 +756,7 @@ void Power::reboot()
 }
 
 //shutdown logic
-void Power::shutdown(uint32_t sleepMs)
+void Power::shutdown()
 {
 
 #if HAS_SCREEN
@@ -764,7 +764,13 @@ void Power::shutdown(uint32_t sleepMs)
 #ifdef T_DECK_PRO
         screen->showSimpleBanner("Device is powered off.\nConnect USB to start!", 0); // T-Deck Pro has no power button
 #else
-        screen->showSimpleBanner("Shutting Down...", 0); // stays on screen
+
+        auto message = "Shutting Down...";
+#ifdef FORCE_SHUTDOWN_LOWPOWER
+        message = "Darksleep, see you soon..";
+#endif
+        screen->showSimpleBanner(message, 0); // stays on screen
+
 #endif
     }
 #endif
@@ -783,7 +789,7 @@ void Power::shutdown(uint32_t sleepMs)
 #ifdef PIN_LED3
     ledOff(PIN_LED3);
 #endif
-    doDeepSleep(sleepMs, true, true);
+    doDeepSleep(DELAY_FOREVER, true, true);
 #elif defined(ARCH_PORTDUINO)
     exit(EXIT_SUCCESS);
 #else
@@ -807,31 +813,31 @@ void Power::readPowerStatus()
         usbPowered = batteryLevel->isVbusIn() ? OptTrue : OptFalse;
         isChargingNow = batteryLevel->isCharging() ? OptTrue : OptFalse;
 
-        #ifdef FORCE_SHUTDOWN_LOWPOWER
-            static uint8_t absolute_shutdown_counter = 0;
-            batteryVoltageMv = batteryLevel->getBattVoltage();
-            LOG_DEBUG("BATTERY VOLTAGE mV %d", batteryVoltageMv);
+#ifdef FORCE_SHUTDOWN_LOWPOWER
+        static uint8_t absolute_shutdown_counter = 0;
+        batteryVoltageMv = batteryLevel->getBattVoltage();
+        LOG_DEBUG("BATTERY VOLTAGE mV %d", batteryVoltageMv);
 
-            if (batteryVoltageMv > 0 && batteryVoltageMv <= ABSOLUTE_SHUTDOWN_MV) {
+        if (batteryVoltageMv > 0 && batteryVoltageMv <= ABSOLUTE_SHUTDOWN_MV) {
 
-                absolute_shutdown_counter++;
+            absolute_shutdown_counter++;
 
-                LOG_ERROR("ABSOLUTE POWER CUTOFF: %d mV (%u/%u)",
-                        batteryVoltageMv,
-                        absolute_shutdown_counter,
-                        ABSOLUTE_SHUTDOWN_COUNT);
+            LOG_ERROR("ABSOLUTE POWER CUTOFF: %d mV (%u/%u)",
+                    batteryVoltageMv,
+                    absolute_shutdown_counter,
+                    ABSOLUTE_SHUTDOWN_COUNT);
 
-                if (absolute_shutdown_counter >= ABSOLUTE_SHUTDOWN_COUNT) {
-                    LOG_ERROR("Voltage too low, forcing shutdown NOW");
-                    absolute_shutdown_counter = ABSOLUTE_SHUTDOWN_COUNT;
-                    shutdown(43200000); //12 h per riprovare
-                    return;
-                }
-
-            } else {
-                absolute_shutdown_counter = 0;
+            if (absolute_shutdown_counter >= ABSOLUTE_SHUTDOWN_COUNT) {
+                LOG_ERROR("Voltage too low, forcing shutdown NOW");
+                absolute_shutdown_counter = ABSOLUTE_SHUTDOWN_COUNT;
+                shutdown();
+                return;
             }
-        #endif
+
+        } else {
+            absolute_shutdown_counter = 0;
+        }
+#endif
 
         if (hasBattery) {
             batteryVoltageMv = batteryLevel->getBattVoltage();
@@ -932,6 +938,7 @@ void Power::readPowerStatus()
     // a row. NOTE: min LiIon/LiPo voltage is 2.0 to 2.5V, current OCV min is set to 3100 that is large enough.
     //
 
+#ifndef FORCE_SHUTDOWN_LOWPOWER
     if (batteryLevel && powerStatus2.getHasBattery() && !powerStatus2.getHasUSB()) {
         if (batteryLevel->getBattVoltage() < OCV[NUM_OCV_POINTS - 1]) {
             low_voltage_counter++;
@@ -944,6 +951,8 @@ void Power::readPowerStatus()
             low_voltage_counter = 0;
         }
     }
+#endif
+
 }
 
 int32_t Power::runOnce()

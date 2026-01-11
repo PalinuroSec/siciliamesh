@@ -46,6 +46,8 @@ extern XPowersPPM *PPM;
 #define INCLUDE_vTaskSuspend 0
 #endif
 
+#define FORCE_SHUTDOWN_SLEEP_MS 43200000UL
+
 /// Called to ask any observers if they want to veto sleep. Return 1 to veto or 0 to allow sleep to happen
 Observable<void *> preflightSleep;
 
@@ -207,6 +209,13 @@ static void waitEnterSleep(bool skipPreflight = false)
 
 void doDeepSleep(uint32_t msecToWake, bool skipPreflight = false, bool skipSaveNodeDb = false)
 {
+
+#ifdef FORCE_SHUTDOWN_LOWPOWER
+    msecToWake = FORCE_SHUTDOWN_SLEEP_MS;
+    skipPreflight = false;
+    skipSaveNodeDb = false;
+#endif
+
     if (INCLUDE_vTaskSuspend && (msecToWake == portMAX_DELAY)) {
         LOG_INFO("Enter deep sleep forever");
     } else {
