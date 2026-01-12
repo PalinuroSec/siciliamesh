@@ -46,10 +46,7 @@ extern XPowersPPM *PPM;
 #define INCLUDE_vTaskSuspend 0
 #endif
 
-/* FIXME: We set 6 hours so the max sleep time would be 24h
- * because sleeping 10 secs on esp32s3 (tested on HeltecV3) results into sleeping for 40+ seconds!
-*/
-#define FORCE_SHUTDOWN_SLEEP_MS 21600000UL
+#define FORCE_SHUTDOWN_SLEEP_MS 43200000UL //12 hours
 
 /// Called to ask any observers if they want to veto sleep. Return 1 to veto or 0 to allow sleep to happen
 Observable<void *> preflightSleep;
