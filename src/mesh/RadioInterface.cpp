@@ -37,7 +37,7 @@ const RegionInfo regions[] = {
         https://www.etsi.org/deliver/etsi_en/300200_300299/30022002/03.02.01_60/en_30022002v030201p.pdf
         FIXME: https://github.com/meshtastic/firmware/issues/3371
      */
-    RDEF(EU_433, 433.0f, 434.0f, 10, 0, 30, true, false, false),
+    RDEF(EU_433, 433.0f, 434.0f, 100, 0, 30, true, false, false),
 
     /*
        https://www.thethingsnetwork.org/docs/lorawan/duty-cycle/
@@ -53,7 +53,7 @@ const RegionInfo regions[] = {
        AFA) to avoid a duty cycle. (Please refer to line P page 22 of this document.)
        https://www.etsi.org/deliver/etsi_en/300200_300299/30022002/03.01.01_60/en_30022002v030101p.pdf
      */
-    RDEF(EU_868, 869.4f, 869.65f, 10, 0, 30, false, false, false),
+    RDEF(EU_868, 869.4f, 869.65f, 100, 0, 30, false, false, false),
 
     /*
         https://lora-alliance.org/wp-content/uploads/2020/11/lorawan_regional_parameters_v1.0.3reva_0.pdf
@@ -558,11 +558,11 @@ void RadioInterface::applyModemConfig()
 
     power = loraConfig.tx_power;
 
-    if ((power == 0) || ((power > myRegion->powerLimit) && !devicestate.owner.is_licensed))
+    if ((power == 0) || !devicestate.owner.is_licensed)
         power = myRegion->powerLimit;
 
     if (power == 0)
-        power = 17; // Default to this power level if we don't have a valid regional power limit (powerLimit of myRegion defaults
+        power = 20; // Default to this power level if we don't have a valid regional power limit (powerLimit of myRegion defaults
                     // to 0, currently no region has an actual power limit of 0 [dBm] so we can assume regions which have this
                     // variable set to 0 don't have a valid power limit)
 

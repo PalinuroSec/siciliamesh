@@ -83,7 +83,7 @@ void Channels::initDefaultLoraConfig()
     loraConfig.modem_preset = meshtastic_Config_LoRaConfig_ModemPreset_LONG_FAST; // Default to Long Range & Fast
     loraConfig.use_preset = true;
     loraConfig.tx_power = 0; // default
-    loraConfig.channel_num = 0;
+    loraConfig.channel_num = 1;
 
 #ifdef USERPREFS_LORACONFIG_MODEM_PRESET
     loraConfig.modem_preset = USERPREFS_LORACONFIG_MODEM_PRESET;
@@ -95,9 +95,9 @@ void Channels::initDefaultLoraConfig()
 
 bool Channels::ensureLicensedOperation()
 {
-    if (!owner.is_licensed) {
-        return false;
-    }
+    //if (!owner.is_licensed) {
+    //    return false;
+    //}
     bool hasEncryptionOrAdmin = false;
     for (uint8_t i = 0; i < MAX_NUM_CHANNELS; i++) {
         auto channel = channels.getByIndex(i);
