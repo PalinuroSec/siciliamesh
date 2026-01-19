@@ -108,10 +108,10 @@ meshtastic_MeshPacket *NodeInfoModule::allocReply()
         meshtastic_User &u = owner;
 
         // Strip the public key if the user is licensed
-        if (u.is_licensed && u.public_key.size > 0) {
-            u.public_key.bytes[0] = 0;
-            u.public_key.size = 0;
-        }
+        //if (u.is_licensed && u.public_key.size > 0) {
+        //    u.public_key.bytes[0] = 0;
+        //    u.public_key.size = 0;
+        //}
 
         // FIXME: Clear the user.id field since it should be derived from node number on the receiving end
         // u.id[0] = '\0';

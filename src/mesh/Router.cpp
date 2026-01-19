@@ -657,7 +657,7 @@ meshtastic_Routing_Error perhapsEncode(meshtastic_MeshPacket *p)
             !portduino_config.force_simradio &&
 #endif
             // Don't use PKC with Ham mode
-            !owner.is_licensed &&
+            //!owner.is_licensed &&
             // Don't use PKC on 'serial' or 'gpio' channels unless explicitly requested
             !(p->pki_encrypted != true && (strcasecmp(channels.getName(chIndex), Channels::serialChannel) == 0 ||
                                            strcasecmp(channels.getName(chIndex), Channels::gpioChannel) == 0)) &&

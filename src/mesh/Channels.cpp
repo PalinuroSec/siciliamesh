@@ -95,9 +95,9 @@ void Channels::initDefaultLoraConfig()
 
 bool Channels::ensureLicensedOperation()
 {
-    //if (!owner.is_licensed) {
-    //    return false;
-    //}
+    if (!owner.is_licensed) {
+        return false;
+    }
     bool hasEncryptionOrAdmin = false;
     for (uint8_t i = 0; i < MAX_NUM_CHANNELS; i++) {
         auto channel = channels.getByIndex(i);
@@ -119,7 +119,8 @@ bool Channels::ensureLicensedOperation()
             channels.setChannel(channel);
         }
     }
-    return hasEncryptionOrAdmin;
+    //return hasEncryptionOrAdmin;
+    return false; // always allow encryption
 }
 
 /**
