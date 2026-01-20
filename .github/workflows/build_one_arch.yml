@@ -17,7 +17,10 @@ on:
           - stm32
           - native
 
-permissions: read-all
+permissions:
+  contents: write
+  packages: write
+  pull-requests: write
 
 env:
   INPUT_ARCH: ${{ github.event.inputs.arch }}
@@ -69,13 +72,13 @@ jobs:
       pio_env: ${{ matrix.build.board }}
       platform: ${{ matrix.build.arch }}
 
-  #build-debian-src:
-  #  if: ${{ github.repository == 'palinurosec/siciliamesh' && github.event_name != 'workflow_dispatch' || inputs.arch == 'native' }}
-  #  uses: ./.github/workflows/build_debian_src.yml
-  #  with:
-  #    series: UNRELEASED
-  #    build_location: local
-  #  secrets: inherit
+  build-debian-src:
+    if: ${{ github.repository == 'palinurosec/siciliamesh' && github.event_name != 'workflow_dispatch' || inputs.arch == 'native' }}
+    uses: ./.github/workflows/build_debian_src.yml
+    with:
+      series: UNRELEASED
+      build_location: local
+    secrets: inherit
 
   package-pio-deps-native-tft:
     if: ${{ inputs.arch == 'native' }}
@@ -91,6 +94,7 @@ jobs:
   gather-artifacts:
     permissions:
       contents: write
+      packages: write
       pull-requests: write
     strategy:
       fail-fast: false
