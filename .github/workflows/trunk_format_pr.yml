@@ -9,7 +9,7 @@ permissions: read-all
 jobs:
   trunk-fmt:
     if: github.event.issue.pull_request != null && contains(github.event.comment.body, 'trunk fmt')
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     permissions:
       contents: write
       pull-requests: write

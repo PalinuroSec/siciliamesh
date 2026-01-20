@@ -64,7 +64,7 @@ jobs:
 
   version:
     if: ${{ inputs.target != '' }}
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v5
       - name: Get release version string
@@ -110,7 +110,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     needs: [version, build]
     steps:
       - name: Checkout code

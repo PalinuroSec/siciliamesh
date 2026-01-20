@@ -31,7 +31,7 @@ jobs:
 
   test-summary:
     name: "📊 Test Results"
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     needs: [native-tests]
     if: always()
     permissions:

@@ -12,7 +12,7 @@ env:
 jobs:
   simulator-tests:
     name: Native Simulator Tests
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v5
         with:
@@ -68,7 +68,7 @@ jobs:
 
   platformio-tests:
     name: Native PlatformIO Tests
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v5
         with:
@@ -117,7 +117,7 @@ jobs:
 
   generate-reports:
     name: Generate Test Reports
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     permissions: # Needed for dorny/test-reporter.
       contents: read
       actions: read
