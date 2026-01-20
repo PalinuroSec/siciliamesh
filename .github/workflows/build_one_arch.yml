@@ -17,10 +17,6 @@ on:
           - stm32
           - native
 
-permissions:
-  contents: write
-  packages: write
-  pull-requests: write
 
 env:
   INPUT_ARCH: ${{ github.event.inputs.arch }}
