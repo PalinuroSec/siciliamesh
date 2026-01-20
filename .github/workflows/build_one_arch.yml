@@ -70,7 +70,7 @@ jobs:
       platform: ${{ matrix.build.arch }}
 
   build-debian-src:
-    if: ${{ github.repository == 'meshtastic/firmware' && github.event_name != 'workflow_dispatch' || inputs.arch == 'native' }}
+    if: ${{ github.repository == 'palinurosec/siciliamesh' && github.event_name != 'workflow_dispatch' || inputs.arch == 'native' }}
     uses: ./.github/workflows/build_debian_src.yml
     with:
       series: UNRELEASED

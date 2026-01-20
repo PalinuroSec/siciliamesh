@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   stale_issues:
-    if: github.repository == 'meshtastic/firmware'
+    if: github.repository == 'palinurosec/siciliamesh'
     name: Close Stale Issues
     runs-on: ubuntu-latest
 

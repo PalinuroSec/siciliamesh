@@ -22,7 +22,7 @@ permissions:
 jobs:
   native-tests:
     name: "🧪 Native Tests"
-    if: github.repository == 'meshtastic/firmware'
+    if: github.repository == 'palinurosec/siciliamesh'
     uses: ./.github/workflows/test_native.yml
     permissions:
       contents: read
