@@ -22,7 +22,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
         libunistring-dev libmicrohttpd-dev libgnutls28-dev libgcrypt20-dev \
         libusb-1.0-0-dev libssl-dev pkg-config && \
     apt-get clean && rm -rf /var/lib/apt/lists/* && \
-    pip install --no-cache-dir -U \
+    pip install --break-system-packages --no-cache-dir -U \
         platformio==6.1.16 \
         grpcio-tools==1.68.1 \
         meshtastic==2.5.9

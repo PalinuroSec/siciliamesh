@@ -22,7 +22,7 @@ jobs:
       #  with:
       #    python-version: 3.x
       #    cache: pip
-      - run: pip install -U platformio
+      - run: pip install --break-system-packages -U platformio
       - name: Generate matrix
         id: jsonStep
         run: |

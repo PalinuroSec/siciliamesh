@@ -13,7 +13,7 @@ RUN apk --no-cache add \
         libusb-dev i2c-tools-dev libuv-dev openssl-dev pkgconf argp-standalone \
         libx11-dev libinput-dev libxkbcommon-dev \
     && rm -rf /var/cache/apk/* \
-    && pip install --no-cache-dir -U platformio \
+    && pip install --break-system-packages --no-cache-dir -U platformio \
     && mkdir /tmp/firmware
 
 WORKDIR /tmp/firmware

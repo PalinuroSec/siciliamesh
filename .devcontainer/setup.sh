@@ -2,5 +2,5 @@
 
 git submodule update --init
 
-pip install --no-cache-dir setuptools
+pip install --break-system-packages --no-cache-dir setuptools
 pipx install esptool

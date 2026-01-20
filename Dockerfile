@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
         libusb-1.0-0-dev libulfius-dev liborcania-dev libssl-dev \
         libx11-dev libinput-dev libxkbcommon-x11-dev \
     && apt-get clean && rm -rf /var/lib/apt/lists/* \
-    && pip install --no-cache-dir -U platformio \
+    && pip install --break-system-packages --no-cache-dir -U platformio \
     && mkdir /tmp/firmware
 
 # Copy source code

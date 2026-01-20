@@ -8,7 +8,7 @@ platformioFailed() {
 		"\nYou may try setting up virtualenv and downloading the latest platformio from pip:" \
 		"\n\tvirtualenv venv" \
 		"\n\tsource venv/bin/activate" \
-		"\n\tpip install platformio" \
+		"\n\tpip install --break-system-packages platformio" \
 		"\n\t./bin/build-native.sh # retry building"
 	exit 1
 }
