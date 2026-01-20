@@ -18,10 +18,10 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v5
-      - uses: actions/setup-python@v6
-        with:
-          python-version: 3.x
-          cache: pip
+      #- uses: actions/setup-python@v6
+      #  with:
+      #    python-version: 3.x
+      #    cache: pip
       - run: pip install -U platformio
       - name: Generate matrix
         id: jsonStep
@@ -223,10 +223,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Setup Python
-        uses: actions/setup-python@v6
-        with:
-          python-version: 3.x
+      #- name: Setup Python
+      #  uses: actions/setup-python@v6
+      #  with:
+      #    python-version: 3.x
 
       - name: Create release
         uses: softprops/action-gh-release@v2
@@ -292,10 +292,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Setup Python
-        uses: actions/setup-python@v6
-        with:
-          python-version: 3.x
+      #- name: Setup Python
+ #       uses: actions/setup-python@v6
+#        with:
+ #         python-version: 3.x
 
       - uses: actions/download-artifact@v6
         with:
@@ -347,10 +347,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Setup Python
-        uses: actions/setup-python@v6
-        with:
-          python-version: 3.x
+      #- name: Setup Python
+ #       uses: actions/setup-python@v6
+#        with:
+ #         python-version: 3.x
 
       - uses: actions/download-artifact@v6
         with:

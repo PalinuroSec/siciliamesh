@@ -30,10 +30,10 @@ jobs:
           ref: ${{github.event.pull_request.head.ref}}
           repository: ${{github.event.pull_request.head.repo.full_name}}
 
-      - name: Setup Python
-        uses: actions/setup-python@v6
-        with:
-          python-version: 3.x
+      #- name: Setup Python
+ #       uses: actions/setup-python@v6
+#        with:
+ #         python-version: 3.x
 
       - name: Install deps
         shell: bash
