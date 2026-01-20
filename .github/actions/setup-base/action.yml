@@ -11,17 +11,17 @@ runs:
         ref: ${{github.event.pull_request.head.ref}}
         repository: ${{github.event.pull_request.head.repo.full_name}}
 
-    - name: Install dependencies
-      shell: bash
-      run: |
-        sudo apt-get -y update --fix-missing
-        sudo apt-get install -y cppcheck libbluetooth-dev libgpiod-dev libyaml-cpp-dev lsb-release
+    #- name: Install dependencies
+    #  shell: bash
+    #  run: |
+    #    sudo apt-get -y update --fix-missing
+    #    sudo apt-get install -y cppcheck libbluetooth-dev libgpiod-dev libyaml-cpp-dev lsb-release
 
-    - name: Setup Python
-      shell: bash
-      run: |
-        sudo apt-get -y update --fix-missing
-        sudo apt-get install -y python3-pip
+    #- name: Setup Python
+    #  shell: bash
+    #  run: |
+    #    sudo apt-get -y update --fix-missing
+    #    sudo apt-get install -y python3-pip
 
     - name: Upgrade python tools
       shell: bash
